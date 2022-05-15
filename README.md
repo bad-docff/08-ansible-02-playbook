@@ -1,28 +1,38 @@
 # Домашнее задание к занятию "08.02 Работа с Playbook"
 
-## Подготовка к выполнению
-
-1. Создайте свой собственный (или используйте старый) публичный репозиторий на github с произвольным именем.
-2. Скачайте [playbook](./playbook/) из репозитория с домашним заданием и перенесите его в свой репозиторий.
-3. Подготовьте хосты в соответствии с группами из предподготовленного playbook.
-
 ## Основная часть
 
 1. Приготовьте свой собственный inventory файл `prod.yml`.
+
+    [prod.yml](./playbook/inventory/prod.yml)
+
 2. Допишите playbook: нужно сделать ещё один play, который устанавливает и настраивает [vector](https://vector.dev).
-3. При создании tasks рекомендую использовать модули: `get_url`, `template`, `unarchive`, `file`.
-4. Tasks должны: скачать нужной версии дистрибутив, выполнить распаковку в выбранную директорию, установить vector.
-5. Запустите `ansible-lint site.yml` и исправьте ошибки, если они есть.
-6. Попробуйте запустить playbook на этом окружении с флагом `--check`.
-7. Запустите playbook на `prod.yml` окружении с флагом `--diff`. Убедитесь, что изменения на системе произведены.
-8. Повторно запустите playbook с флагом `--diff` и убедитесь, что playbook идемпотентен.
-9. Подготовьте README.md файл по своему playbook. В нём должно быть описано: что делает playbook, какие у него есть параметры и теги.
-10. Готовый playbook выложите в свой репозиторий, поставьте тег `08-ansible-02-playbook` на фиксирующий коммит, в ответ предоставьте ссылку на него.
 
----
+    ```yml
+    - name: Install Vector
+        hosts: clickhouse
+        tasks:
+            - name: Get Vector distrib
+            ansible.builtin.get_url:
+                url: "https://packages.timber.io/vector/0.21.1/vector-0.21.1-1.x86_64.rpm"
+                dest: "./vector-0.21.1-1.x86_64.rpm"
+                mode: 0444
+                validate_certs: false
+            - name: Install Vector packages
+            become: true
+            ansible.builtin.yum:
+                name:
+                - vector-0.21.1-1.x86_64.rpm
+            notify: Start vector service
+            tags: packages
+    ```
 
-### Как оформить ДЗ?
+Данный playbook производит установку Clickhouse и Vector.
+Подключение производится к заранее подготовленному контейнеру на базе Centos 8.
 
-Выполненное домашнее задание пришлите ссылкой на .md-файл в вашем репозитории.
+В group_vars/vars.yml Указаны пакеты для установки связанные с Clickhouse и их версии.
+
+В плейбуке присутствуют теги: packages и create_db
+
 
 ---
