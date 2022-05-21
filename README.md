@@ -6,7 +6,7 @@
 
     [prod.yml](./playbook/inventory/prod.yml)
 
-2. Допишите playbook: нужно сделать ещё один play, который устанавливает и настраивает [vector](https://vector.dev).
+1. Допишите playbook: нужно сделать ещё один play, который устанавливает и настраивает [vector](https://vector.dev).
 
     ```yml
     - name: Install Vector
@@ -27,8 +27,11 @@
             tags: packages
     ```
 
+1. Вывод линтера
+    ![ansible-lint](./extfiles/ansible-lint.png)
+
 Данный playbook производит установку Clickhouse и Vector.
-Подключение производится к заранее подготовленному контейнеру на базе Centos 8.
+Подключение производится к заранее подготовленным контейнерам на базе Centos 8.
 
 В group_vars/vars.yml Указаны пакеты для установки связанные с Clickhouse и их версии.
 
